@@ -73,6 +73,8 @@ module SalesforceRails
     config.middleware.use Databasedotcom::OAuth2::WebServerFlow,
                           "token_encryption_key" => Base64.strict_decode64(ENV['TOKEN_ENCRYPTION_KEY']),
                           "display" => "touch", # will force salesforce login to be optimized for touch
+                          "debugging" => "true",
+                          "version" => 25.0,
                           "endpoints" => {"login.salesforce.com" => {"key" => ENV['CONSUMER_KEY'],
                                                                      "secret" => ENV['CONSUMER_SECRET']}}
 
