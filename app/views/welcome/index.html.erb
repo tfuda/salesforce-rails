@@ -1,7 +1,7 @@
 <% if @authenticated%>
     You're logged in as <%= @me.username%>. Click <a href="/logout">here</a> to logout.
     <br/>
-    Click here to see a list of <a href="contact/index" >Contacts</a>
+    Click here to see a list of <%= link_to "Disbursement Records", "disbursement_records/index" %>
 <% else %>
     You're not logged in. Click <a href="/auth/salesforce">here</a> to login.
 <% end%>

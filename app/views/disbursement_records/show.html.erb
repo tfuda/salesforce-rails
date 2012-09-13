@@ -1,0 +1,296 @@
+<% if @authenticated %>
+    <div id="frontPage">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><img src="/assets/DisbursementReportLogo.jpg" /></td>
+          <td id="companyHeader">
+            850 Seventh Ave, Suite 1201<br/>
+            New York, NY 10019<br/>
+            (212) 271-4328<br/>
+            www.patrontechnology.com
+          </td>
+        </tr>
+      </table>
+      <hr />
+      <br />
+      Date: <%= @summary_data.created_date.localtime.strftime("%-m/%-d/%Y") %><br />
+      To: <%= @summary_data.org_name %><br />
+      From: Patron Manager, LLC<br />
+      Re: PatronManager CRM Weekly Settlement Report<br />
+      <br />
+      Dear Client:<br />
+      <br />
+      Enclosed please find your weekly settlement report for the week ending <strong><%= @summary_data.end_date %>.</strong><br />
+      <br />
+      Below is summary of transactions for the week, and the details are on the following pages.<br />
+      <br />
+      If you have any questions, please contact Client Services at patmanhelp@patrontechnology.com.<br />
+      <br />
+      Sincerely,<br />
+      PatronManager CRM Client Services<br />
+      <br />
+      <hr />
+      <% if @summary_data.has_non_cc_txns %>
+        <div style="font-weight:bold;">Transaction Summary</div><br />
+        <span style="font-weight:bold;">Credit Card Totals</span><br />
+      <% else %>
+        <span style="font-weight:bold;">Credit Card Summary Report:</span><br />
+      <% end %>
+
+      <table cellpadding="0" cellspacing="0" border="1">
+        <tbody>
+        <tr>
+          <td>Txn Gross</td>
+          <td>Buyer Price</td>
+          <td>Buyer Fee</td>
+          <td>PTech Fee</td>
+          <td>Tickets Total</td>
+          <td>Order Fee</td>
+          <td>Ship Fee</td>
+          <td>Donation</td>
+          <td>Subj. to Proc. Fee</td>
+          <td>Credit Card Processor Fee</td>
+          <td>Net Total</td>
+        </tr>
+        <tr>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.txn_total, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.buyer_price, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.buyer_line_item_fee, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.ptech_fee, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.item_post_fee_total, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.buyer_order_fee, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.delivery_fee, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.donation_amt, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.amt_subj_to_proc_fee, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap">
+            <%= number_with_precision(@summary_data.cc_txns.org_proc_fee, :precision => 2) %>
+          </td>
+          <td class="currencyField" nowrap="nowrap" style="font-weight:bold;">
+            <%= number_with_precision(@summary_data.cc_txns.amt_subj_to_proc_fee + @summary_data.cc_txns.org_proc_fee, :precision => 2) %>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <% if @summary_data.has_non_cc_txns %>
+        <br/>
+        <span style="font-weight:bold;">Cash/Check Totals</span><br />
+        <table cellpadding="0" cellspacing="0" border="1">
+          <tbody>
+          <tr>
+            <td>Txn Gross</td>
+            <td>Buyer Price</td>
+            <td>Buyer Fee</td>
+            <td>PTech Fee</td>
+            <td>Tickets Total</td>
+            <td>Order Fee</td>
+            <td>Ship Fee</td>
+            <td>Donation</td>
+          </tr>
+          <tr>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.non_cc_txns.txn_total, :precision => 2) %>
+            </td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.non_cc_txns.buyer_price, :precision => 2) %>
+            </td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.non_cc_txns.buyer_line_item_fee, :precision => 2) %>
+            </td>
+            <td class="currencyField" nowrap="nowrap" style="font-weight:bold;">
+              <%= number_with_precision(@summary_data.non_cc_txns.ptech_fee, :precision => 2) %>
+            </td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.non_cc_txns.item_post_fee_total, :precision => 2) %>
+            </td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.non_cc_txns.buyer_order_fee, :precision => 2) %>
+            </td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.non_cc_txns.delivery_fee, :precision => 2) %>
+            </td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.non_cc_txns.donation_amt, :precision => 2) %>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <br /><br />
+        <span style="font-weight:bold;">Settlement Totals</span><br />
+        <table cellpadding="0" cellspacing="0" border="1">
+          <tbody>
+          <tr><td style="font-weight:bold;">Net Total from Credit Card Transactions:</td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.cc_txns.txn_total, :precision => 2) %>
+            </td>
+          </tr>
+          <tr><td style="font-weight:bold;">Less Fees due PatronTech for Cash/Check Transactions:</td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.cc_txns.ptech_fee, :precision => 2) %>
+            </td>
+          </tr>
+          <tr><td style="font-weight:bold;">Total Due to You:</td>
+            <td class="currencyField" nowrap="nowrap">
+              <%= number_with_precision(@summary_data.cc_txns.net_total + @summary_data.cc_txns.ptech_fee, :precision => 2) %>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div style="page-break-after: always;">&nbsp;</div>
+      <% end %>
+
+      <div id="glossary">
+        <br />
+        <span style="font-weight:bold;font-size:14px;">Glossary:</span><br />
+        <br />
+        <span style="font-weight:bold;">Txn Gross:</span> The total amount of the transaction.<br />
+        <br />
+        <span style="font-weight:bold;">Buyer Price:</span> The face value of the tickets that the buyer paid, after discount and before any fees.<br />
+        <br />
+        <span style="font-weight:bold;">Buyer Fee:</span> Any per-ticket fees charged to the patron (configured in your ticketing setup).<br />
+        <br />
+        <span style="font-weight:bold;">PatronTech Fee:</span> Any per-ticket fees collected by Patron Technology (determined by what's in your contract).<br />
+        <br />
+        <span style="font-weight:bold;">Tickets Total:</span> Actual ticket revenue from each order - what the buyer paid, after discount and including per-ticket fees. (Calculated as "Buyer Price" + "Buyer Fee" - "PatronTech Fee")<br />
+        <br />
+        <span style="font-weight:bold;">Order Fee:</span> Any per-transaction fees you've chosen to charge to the patron (configured in your ticketing setup).<br />
+        <br />
+        <span style="font-weight:bold;">Ship Fee:</span> Any shipping fee you've chosen to charge to the patron on orders delivered by mail (configured in your ticketing setup).<br />
+        <br />
+        <span style="font-weight:bold;">Donation:</span> Any donation the buyer chose to add to their ticket purchase. (For standalone donations that are not part of ticket orders, this number is the same as the transaction gross.)<br />
+        <br />
+        <span style="font-weight:bold;">Subj. to Proc. Fee:</span> The total amount of the transaction that credit card fees apply to (calculated as "Tickets Total" + "Order Fee" + "Ship Fee" + "Donation")<br />
+        <br />
+        <span style="font-weight:bold;">Credit Card Processor Fee:</span> The total credit card fees on the transaction.<br />
+        <br />
+        <span style="font-weight:bold;">Net Total:</span> The total amount being disbursed to you from credit card sales.<br />
+        <br />
+        <span style="font-weight:bold;">Order Detail:</span> Displays the Ticket Order name, and lists all the items that are part of this transaction (tickets, donations, refunds, exchange items)<br />
+        <% if @summary_data.has_chargebacks %>
+          <br />
+          <br />
+          <span style="font-weight:bold;">**Chargebacks:</span> This week's report includes one or more chargebacks.  A patron disputed a charge that was processed through PatronManager and the chargeback was resolved in their favor during this pay period, so it appears as a line item on this report.<br />
+        <% end %>
+        <br />
+      </div>
+    </div>
+
+    <div id="reportHeader"><%= @summary_data.org_name %> - <%= @summary_data.dis_rec_name %></div>
+
+    <div class="footer">
+      <div>Page <span class="pagenumber"/> of <span class="pagecount"/></div>
+    </div>
+
+    <div id="reportHeader">Credit Card Transactions</div>
+
+    <table cellpadding="0" cellspacing="0">
+        <thead align="center">
+            <th>Transaction Date</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th class="orderDetail">Order Detail</th>
+            <th>Txn Gross</th>
+            <th>Buyer<br/>Price</th>
+            <th>Buyer<br/>Fee</th>
+            <th>PTech<br/>Fee</th>
+            <th>Tickets<br/>Total</th>
+            <th>Order<br/>Fee</th>
+            <th>Delivery<br/>Fee</th>
+            <% if @summary_data.cc_txns.exch_fee != 0 %>
+                <th>Exchange Fee</th>
+            <% end %>
+            <th>Donation</th>
+            <th>Subj. to<br/>Proc. Fee</th>
+            <th>Credit Card<br/>Processor Fee</th>
+            <th>Net Total</th>
+            <th><% if @summary_data.currency_code != "USD" %>Currency<% end %></th>
+        </thead>
+        <tbody>
+            <% @cc_wrappers.each do |cc_wrapper| %>
+                <tr>
+                    <td><%= (Time.parse(cc_wrapper.pt.PatronTrx__TransactionDate__c)).localtime.strftime("%-m/%-d/%Y %-l:%M %p") %></td>
+                    <td><%= cc_wrapper.pt.PatronTrx__FirstName__c %></td>
+                    <td><%= cc_wrapper.pt.PatronTrx__LastName__c %></td>
+                    <td class="orderDetail"><%= cc_wrapper.pt.PatronTrx__OrderName__c %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.TransactionTotal__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.BuyerPrice__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.BuyerFee__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.PatronTechFee__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.ItemPostFeeTotal__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.BuyerOrderFee__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.ShippingFee__c, :precision => 2) %></td>
+                    <% if @summary_data.cc_txns.exch_fee != 0 %>
+                        <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.ExchangeFee__c, :precision => 2) %></td>
+                    <% end %>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.DonationAmount__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.AmountSubjectToProcessingFee__c, :precision => 2) %></td>
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.OrganizationProcessingFee__c, :precision => 2) %></td>
+<!--                TODO - Display CC Transaction Fee when available
+                    <td class="currencyField" nowrap="true">
+                        <%= number_with_precision(cc_wrapper.dtl.CreditCardTransactionFee__c, :precision => 2) %>
+                    </td>
+-->
+                    <td class="currencyField" nowrap="true"><%= number_with_precision(cc_wrapper.dtl.AmountSubjectToProcessingFee__c + cc_wrapper.dtl.OrganizationProcessingFee__c, :precision => 2) %></td>
+                    <td><% if @summary_data.currency_code != "USD" %>@summary_data.currency_code<%end%></td>
+                </tr>
+                <% cc_wrapper.pti_list.each do |pti| %>
+                  <tr>
+                    <td colspan="3"></td>
+                    <td colspan="13"><%= pti.PatronTrx__Quantity__c.round(0) %> x <%= pti.PatronTrx__ItemName__c %></td>
+                  </tr>
+                <%end%>
+                <tr><td colspan="17" class="solidline"></td></tr>
+            <%end%>
+            <tr>
+              <td class="totals" colspan="3"></td>
+              <td class="totals">Totals</td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.txn_total, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.buyer_price, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.buyer_line_item_fee, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.ptech_fee, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.item_post_fee_total, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.buyer_order_fee, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.delivery_fee, :precision => 2) %></td>
+              <% if @summary_data.cc_txns.exch_fee != 0 %>
+                  <td class="totals"><%= number_with_precision(@summary_data.cc_txns.exch_fee, :precision => 2) %></td>
+              <% end %>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.donation_amt, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.amt_subj_to_proc_fee, :precision => 2) %></td>
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.org_proc_fee, :precision => 2) %></td>
+<!--          TODO - Put this back when the new CC fee field is available
+              <td class="totals"><%= number_with_precision(@summary_data.cc_txns.cc_txn_fee, :precision => 2) %></td>
+-->
+              <td class="totals" nowrap="true"><%= number_with_precision(@summary_data.cc_txns.net_total, :precision => 2) %></td>
+            </tr>
+        </tbody>
+
+        <% if @summary_data.has_non_cc_txns %>
+            <tfoot>
+                <tr>
+                    <td colspan="15" style="text-align:right"><br/>Credit Card</td>
+                </tr>
+            </tfoot>
+        <% end %>
+    </table>
+
+<% else %>
+    You're not logged in. Click <a href="/auth/salesforce">here</a> to login.
+<% end %>
