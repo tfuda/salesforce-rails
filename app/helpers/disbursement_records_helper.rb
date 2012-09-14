@@ -46,6 +46,9 @@ module DisbursementRecordsHelper
         dtl_list += dtl_collection
       end
 
+      # We're done if there are no DTL records
+      return if dtl_list.size == 0
+
       # Generate a comma separated list of PT IDs
       pt_ids = "("
       dtl_list.each do |dtl|
@@ -58,7 +61,7 @@ module DisbursementRecordsHelper
       pt_query = "SELECT Id, Name, PatronTrx__FirstName__c, PatronTrx__LastName__c, " +
           "PatronTrx__TransactionDate__c, PatronTrx__OrderName__c, PatronTrx__Status__c, " +
           "(SELECT Id, PatronTrx__ItemName__c, PatronTrx__ItemType__c, PatronTrx__Quantity__c " +
-          "FROM PatronTrx__PaymentTransactionItem__r)" +
+          "FROM PatronTrx__PaymentTransactionItem__r) " +
           "FROM PatronTrx__PaymentTransaction__c WHERE Id IN " + pt_ids
 
       # Execute the query and loop to make sure we get all records in the case where there are more than 2000 transactions
