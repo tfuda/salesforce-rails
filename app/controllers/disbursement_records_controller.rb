@@ -29,13 +29,9 @@ class DisbursementRecordsController < ApplicationController
                               :instance_url  => client.instance_url, :client_id     => client.client_id,
                               :client_secret => client.client_secret
 
-    # Get the Disbursement Record
-    @disbursement_record = rf_client.query("SELECT Id, Name, OrganizationName__c, EndDate__c, CurrencyIsoCode, " +
-        "CreatedDate, CreatedById, CreatedBy.Name FROM DisbursementRecord__c WHERE Id = '" + params[:id] + "'")[0]
+    # Get the DisbursementReportDescriptor object
+    @dr_descriptor = DisbursementRecordsHelper::DisbursementReportDescriptor.new(params[:id], rf_client)
 
-    @cc_wrappers = DisbursementRecordsHelper.get_line_items(@disbursement_record, "CC", rf_client)
-
-    @summary_data = DisbursementRecordsHelper.get_summary_data(@disbursement_record, rf_client)
     str = render_to_string
 
     if(params[:pdf])
