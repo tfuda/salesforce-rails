@@ -7,8 +7,10 @@ module DisbursementRecordsHelper
     attr_accessor :summary_data
     def initialize(dr_id, client)
       # Get the Disbursement Record object
-      @disbursement_record = client.query("SELECT Id, Name, OrganizationName__c, EndDate__c, CurrencyIsoCode, " +
-          "CreatedDate, CreatedById, CreatedBy.Name FROM DisbursementRecord__c WHERE Id = '" + dr_id + "'")[0]
+      @disbursement_record = client.query("SELECT Id, Name, OrganizationName__c, EndDate__c, " +
+          "PatronManagerOpportunity__c, PatronManagerOpportunity__r.PatronManager_Account_Org_ID__c, " +
+          "CurrencyIsoCode, CreatedDate, CreatedById, CreatedBy.Name " +
+          "FROM DisbursementRecord__c WHERE Id = '" + dr_id + "'")[0]
 
       # Get the Credit Card line items
       @cc_items = get_line_items("CC", client)
@@ -24,19 +26,20 @@ module DisbursementRecordsHelper
     def get_line_items(payment_method, client)
       # Generate a query to get the Disbursement Transaction Link records for the Disbursement Record identified by dr_id
       dtl_query = "SELECT Id, AmountSubjectToProcessingFee__c, " +
-          "DiscountAmount__c, DonationAmount__c, BuyerOrderFee__c, BuyerFee__c, ItemPostFeeTotal__c, PatronTechFee__c, " +
-          "BuyerPrice__c, ShippingFee__c, TransactionFee__c, TransactionTotal__c, OrganizationProcessingFee__c, " +
+          "DiscountAmount__c, DonationAmount__c, BuyerOrderFee__c, BuyerFee__c, " +
+          "ItemPostFeeTotal__c, PatronTechFee__c, BuyerPrice__c, ShippingFee__c, " +
+          "TransactionFee__c, TransactionTotal__c, OrganizationProcessingFee__c, " +
           # TODO - CreditCardTransactionFee__c not yet implemented in production
           #"ExchangeFee__c, CreditCardTransactionFee__c, PatronTrxPaymentTransaction__c " +
           "ExchangeFee__c, PatronTrxPaymentTransaction__c " +
           "FROM DisbursementTransactionLink__c " +
-          "WHERE DisbursementRecord__c = '" + @disbursement_record.Id + "'"
+          "WHERE DisbursementRecord__c = '" + @disbursement_record.Id + "' "
       if payment_method == "CC"
-        dtl_query += " AND (PaymentMethod__c = 'Credit Card' or PaymentMethod__c = null)"
+        dtl_query += "AND (PaymentMethod__c = 'Credit Card' OR PaymentMethod__c = null) "
       else
-        dtl_query += " AND (PaymentMethod__c != 'Credit Card' and PaymentMethod__c != null)"
+        dtl_query += "AND (PaymentMethod__c != 'Credit Card' AND PaymentMethod__c != null) "
       end
-      dtl_query += " ORDER BY PatronTrxPaymentTransaction__r.PatronTrx__TransactionDate__c DESC"
+      dtl_query += "ORDER BY PatronTrxPaymentTransaction__r.PatronTrx__TransactionDate__c DESC"
 
       # Execute the query and loop to make sure we get all records in the case where there are more than 2000 transactions
       dtl_collection = client.query(dtl_query)
@@ -49,20 +52,20 @@ module DisbursementRecordsHelper
       # We're done if there are no DTL records
       return if dtl_list.size == 0
 
-      # Generate a comma separated list of PT IDs
-      pt_ids = "("
-      dtl_list.each do |dtl|
-        pt_ids += "'" + dtl.PatronTrxPaymentTransaction__c + "',"
-      end
-      pt_ids = pt_ids.chop
-      pt_ids += ")"
-
       # Generate a query to get the PTs (and child PTIs) associated with these DTLs
       pt_query = "SELECT Id, Name, PatronTrx__FirstName__c, PatronTrx__LastName__c, " +
-          "PatronTrx__TransactionDate__c, PatronTrx__OrderName__c, PatronTrx__Status__c, " +
+          "PatronTrx__TransactionDate__c, PatronTrx__OrderName__c, " +
+          "PatronTrx__Status__c, PatronTrx__OrganizationId__c, " +
           "(SELECT Id, PatronTrx__ItemName__c, PatronTrx__ItemType__c, PatronTrx__Quantity__c " +
           "FROM PatronTrx__PaymentTransactionItem__r) " +
-          "FROM PatronTrx__PaymentTransaction__c WHERE Id IN " + pt_ids
+          "FROM PatronTrx__PaymentTransaction__c " +
+          "WHERE Id IN (SELECT PatronTrxPaymentTransaction__c FROM DisbursementTransactionLink__c " +
+          "WHERE DisbursementRecord__c = '" + @disbursement_record.Id + "' "
+      if payment_method == "CC"
+        pt_query += "AND (PaymentMethod__c = 'Credit Card' OR PaymentMethod__c = null))"
+      else
+        pt_query += "AND (PaymentMethod__c != 'Credit Card' AND PaymentMethod__c != null))"
+      end
 
       # Execute the query and loop to make sure we get all records in the case where there are more than 2000 transactions
       pt_collection = client.query(pt_query)
