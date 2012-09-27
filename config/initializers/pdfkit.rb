@@ -1,3 +1,7 @@
 PDFKit.configure do |config|
-  config.wkhtmltopdf = File.join('C:', 'wkhtmltopdf', 'wkhtmltopdf.exe')
+  if(Rails.env.development?)
+    config.wkhtmltopdf = File.join('C:', 'wkhtmltopdf', 'wkhtmltopdf.exe')
+  else
+    config.wkhtmltopdf = File.join(Rails.root, 'bin', 'wkhtmltopdf')
+  end
 end
