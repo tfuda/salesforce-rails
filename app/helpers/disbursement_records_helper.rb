@@ -76,18 +76,10 @@ module DisbursementRecordsHelper
       end
 
       # Put the PTs into a hash, keyed on PT.Id
-      pt_hash = {}
-      pt_list.each do |pt|
-        pt_hash[pt.Id] = pt
-      end
+      pt_hash = Hash[pt_list.map {|pt| [pt.Id, pt]}]
 
-      # Build and return the list of LineItemWrapper
-      line_items = []
-      dtl_list.each do |dtl|
-        line_item = DisbursementRecordsHelper::LineItemWrapper.new(pt_hash[dtl.PatronTrxPaymentTransaction__c], dtl)
-        line_items.append(line_item)
-      end
-      return line_items
+      # Build and return the list of LineItemWrapper objects
+      dtl_list.collect {|dtl| DisbursementRecordsHelper::LineItemWrapper.new(pt_hash[dtl.PatronTrxPaymentTransaction__c], dtl)}
     end
 
     # This method returns summaries of the CC and non-CC transaction totals.

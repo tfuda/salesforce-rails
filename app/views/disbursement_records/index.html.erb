@@ -10,32 +10,35 @@
   }
 </script>
 
-<% if @authenticated %>
-    <h1>Disbursement Records</h1>
-    <%= form_tag("/disbursement_records/show", :method => "post", :onsubmit => "setHiddenInput();") do %>
-        <%= submit_tag("Show Selected") %>
-        <table>
-          <thead>
-            <th><input type="checkbox" name="select_all" onclick="selectDeselectAll(this);" ></th>
-            <th>Name</th>
-            <th>Organization Name</th>
-            <th>Date Created</th>
-            <th>Created By</th>
-          </thead>
-          <tbody>
-            <% @disbursement_records.each do |disbursement_record| %>
-                <tr>
-                  <td><%= check_box_tag "selected_ids[]", disbursement_record.Id, false, :id => disbursement_record.Id %></td>
-                  <td><%= disbursement_record.Name %></td>
-                  <td><%= disbursement_record.OrganizationName__c %></td>
-                  <td><%= Time.parse(disbursement_record.CreatedDate).localtime.strftime("%-m/%-d/%Y") %></td>
-                  <td><%= disbursement_record.CreatedBy.Name %></td>
-                </tr>
-            <% end %>
-          </tbody>
-        </table>
-        <%= hidden_field_tag "pdf", true %>
-    <% end %>
-<% else %>
-    You're not logged in. Click <a href="/auth/salesforce">here</a> to login.
+<h1>Disbursement Records</h1>
+<%= form_tag("/disbursement_records/index", :method => "get") do %>
+    <span>Start Date: <%= select_date(Date.current - 7.days, :prefix => 'start_date') %></span>
+    <span style="padding-left: 20px;">End Date: <%= select_date(Date.current, :prefix => 'end_date') %></span>
+    <span style="padding-left: 20px;"><%= submit_tag "Fetch Records" %></span>
+<% end %>
+<br/>
+<%= form_tag("/disbursement_records/show.pdf", :method => "post") do %>
+    <%= submit_tag("Generate PDF for Selected Records") %>
+    <br/>
+    <br/>
+    <table>
+      <thead>
+        <th><input type="checkbox" name="select_all" onclick="selectDeselectAll(this);" ></th>
+        <th>Name</th>
+        <th>Organization Name</th>
+        <th>Date Created</th>
+        <th>Created By</th>
+      </thead>
+      <tbody>
+        <% @disbursement_records.each do |disbursement_record| %>
+            <tr>
+              <td><%= check_box_tag "selected_ids[]", disbursement_record.Id, false, :id => disbursement_record.Id %></td>
+              <td><%= disbursement_record.Name %></td>
+              <td><%= disbursement_record.OrganizationName__c %></td>
+              <td><%= Time.parse(disbursement_record.CreatedDate).localtime.strftime("%-m/%-d/%Y") %></td>
+              <td><%= disbursement_record.CreatedBy.Name %></td>
+            </tr>
+        <% end %>
+      </tbody>
+    </table>
 <% end %>

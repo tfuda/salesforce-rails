@@ -1,3 +1,3 @@
 PDFKit.configure do |config|
-  config.wkhtmltopdf = 'C:\wkhtmltopdf\wkhtmltopdf.exe'
+  config.wkhtmltopdf = File.join('C:', 'wkhtmltopdf', 'wkhtmltopdf.exe')
 end
