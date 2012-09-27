@@ -1,7 +1,6 @@
 class ApplicationController < ActionController::Base
   include Databasedotcom::OAuth2::Helpers
   before_filter :require_authentication
-  protect_from_forgery
 
   def rf_client
     # Steal the stuff required to instantiate the Restforce client from the Databasedotcom client

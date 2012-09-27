@@ -1,0 +1,25 @@
+<%= form_for(@pdf_report) do |f| %>
+  <% if @pdf_report.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@pdf_report.errors.count, "error") %> prohibited this pdf_report from being saved:</h2>
+
+      <ul>
+      <% @pdf_report.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :dr_list %><br />
+    <%= f.text_area :dr_list %>
+  </div>
+  <div class="field">
+    <%= f.label :status %><br />
+    <%= f.text_area :status %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,3 +1,5 @@
+require 'delayed_job'
+
 class DisbursementRecordsController < ApplicationController
   include Databasedotcom::OAuth2::Helpers
   before_filter :require_authentication
@@ -27,22 +29,50 @@ class DisbursementRecordsController < ApplicationController
   end
 
   def show
+    PdfReport.transaction do
+      report = PdfReport.new(:status => PdfReport::Status::Queued, :dr_list => params[:selected_ids].join(','))
+      report.save!
+      job = Delayed::Job.enqueue PDFGeneration.new(report.id,params[:selected_ids],rf_client)
+      report.delayed_job_id = job.id
+      report.save!
+      flash[:notice] = 'Report has been enqueued'
+    end
+    redirect_to :controller => 'pdf_reports', :action => 'index'
+  end
+
+  def render_pdf(ids,rf_client)
     # Get the DisbursementReportDescriptor object
-    @dr_descriptors = params[:selected_ids].collect {|dr_id|
+    @dr_descriptors = ids.collect {|dr_id|
       DisbursementRecordsHelper::DisbursementReportDescriptor.new(dr_id, rf_client)
     }
 
-    respond_to do |format|
-      format.html { return }
-      format.pdf {
-        self.formats = [:html]
-        str = render_to_string
-        pdf = PDFKit.new(str, :page_size => "Letter").to_pdf
-        send_data pdf, { :filename => "dr.pdf", :type => :pdf, :disposition => "attachment" }
-      }
-    end
+    str = render_to_string(:template => 'disbursement_records/show')
+    PDFKit.new(str, :page_size => "Letter")
   end
 
   def search
+  end
+
+  class PDFGeneration
+    def initialize(report_id, ids, rf_client)
+      Rails.logger.info("SOMETHING #{rf_client}")
+      @report_id = report_id
+      @ids = ids
+      @rf_client = rf_client
+    end
+    def perform
+      Rails.logger.info("BLAH #{@rf_client}")
+      #logger.error("HI!")
+      kit = DisbursementRecordsController.new.render_pdf(@ids,@rf_client)
+      PdfBlob.transaction do
+        blob = PdfBlob.new
+        blob.blob = kit.to_pdf
+        blob.save!
+        report = PdfReport.find(@report_id)
+        report.pdf_blob_id = blob.id
+        report.status = PdfReport::Status::Done
+        report.save!
+      end
+    end
   end
 end

@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Dr list:</b>
+  <%= @pdf_report.dr_list %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%= @pdf_report.status %>
+</p>
+
+<p>
+  <b>Job:</b>
+  <%= @pdf_report.delayed_job_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_pdf_report_path(@pdf_report) %> |
+<%= link_to 'Back', pdf_reports_path %>
