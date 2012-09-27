@@ -1,5 +1,12 @@
 module DisbursementRecordsHelper
 
+  def pdf_image_tag(filename, options = {})
+    path = Rails.root.join("app/assets/images/#{filename}")
+    options[:src] = path.to_s
+    attributes = options.map{ |k,v| "#{k}='#{v}'" }.join(" ")
+    raw("<img #{attributes} />")
+  end
+
   class DisbursementReportDescriptor
     attr_accessor :disbursement_record
     attr_accessor :cc_items

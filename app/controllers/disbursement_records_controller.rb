@@ -29,6 +29,12 @@ class DisbursementRecordsController < ApplicationController
   end
 
   def show
+    if(params[:render_as_html])
+      @dr_descriptors = params[:selected_ids].collect {|dr_id|
+        DisbursementRecordsHelper::DisbursementReportDescriptor.new(dr_id, rf_client)
+      }
+      return
+    end
     PdfReport.transaction do
       report = PdfReport.new(:status => PdfReport::Status::Queued, :dr_list => params[:selected_ids].join(','))
       report.save!

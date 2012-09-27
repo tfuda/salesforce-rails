@@ -17,7 +17,8 @@
     <span style="padding-left: 20px;"><%= submit_tag "Fetch Records" %></span>
 <% end %>
 <br/>
-<%= form_tag("/disbursement_records/show.pdf", :method => "post") do %>
+<%= form_tag("/disbursement_records/show", :method => "post") do %>
+    HTML? <%=  check_box_tag "render_as_html" %><br/>
     <%= submit_tag("Generate PDF for Selected Records") %>
     <br/>
     <br/>
