@@ -53,7 +53,7 @@ class DisbursementRecordsController < ApplicationController
     }
 
     str = render_to_string(:template => 'disbursement_records/show')
-    PDFKit.new(str, :page_size => "Letter")
+    PDFKit.new(str, :page_size => 'Letter', :orientation => 'Landscape')
   end
 
   def search
