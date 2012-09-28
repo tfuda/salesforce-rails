@@ -18,14 +18,14 @@
     <td><%= pdf_report.dr_list %></td>
     <td><%= pdf_report.status %></td>
     <td><%= pdf_report.delayed_job_id %></td>
-    <td><%= link_to 'Download', download_pdf_report_path(pdf_report) %></td>
+    <td>
+      <% if pdf_report.status == PdfReport::Status::Done %>
+          <%= link_to 'Download', download_pdf_report_path(pdf_report) %>
+      <%end%>
+    </td>
     <td><%= link_to 'Show', pdf_report %></td>
     <td><%= link_to 'Edit', edit_pdf_report_path(pdf_report) %></td>
     <td><%= link_to 'Destroy', pdf_report, method: :delete, data: { confirm: 'Are you sure?' } %></td>
   </tr>
 <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New Pdf report', new_pdf_report_path %>
