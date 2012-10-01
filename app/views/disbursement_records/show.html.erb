@@ -12,69 +12,26 @@
     .solidline{border-bottom:1px solid #000000;}
     .totals{border-bottom:1px solid #000000;font-weight:bold;text-align:right; white-space:nowrap;}
 
-    @page {
-        @top-left {
-            content: element(header);
-        }
-        @bottom-left {
-            content: element(footer);
-        }
-
-        @PageBreak {
-            page-break:always;
-            page-break-inside:avoid;
-        }
-        size: landscape;
-        margin-top: 15mm;
-        margin-bottom: 15mm;
-        margin-left: 10mm;
-        margin-right: 10mm;
-    }
-
-    div.pdfHeader {
-        padding: 10px;
-        position: running(header);
-    }
-
-    div.footer {
-        display: block;
-        padding: 5px;
-        position: running(footer);
-    }
-
-    .pagenumber:before {
-        content: counter(page);
-    }
-
-    .pagecount:before {
-        content: counter(pages);
-    }
-
-    table {
-        -fs-table-paginate: paginate;
-        page-break-inside:auto
-    }
-    tr {page-break-inside:avoid;page-break-after:auto;}
-
-    #frontPage {
+    #frontPage{
         font-family:Arial, Helvetica, sans-serif;
         font-size:12px;
         text-align:left;
         page-break-after:always;
     }
-
-    #glossary {
+    #glossary{
         font-family:Arial, Helvetica, sans-serif;
         font-size:11px;
         text-align:left;
         line-height:10px;
     }
-
     #companyHeader{
         font-family:Arial, Helvetica, sans-serif;
         font-size:11px;
         text-align:right;
     }
+
+    table{ page-break-inside: auto; }
+    tr{ page-break-inside:avoid;page-break-after:auto; }
 </style>
 
 <% @dr_descriptors.each do |dr_desc| %>
@@ -293,11 +250,6 @@
     </div>
 
     <div id="reportHeader"><%= dr_desc.summary_data.org_name %> - <%= dr_desc.summary_data.dis_rec_name %></div>
-
-    <div class="footer">
-      <div>Page <span class="pagenumber"/> of <span class="pagecount"/></div>
-    </div>
-
     <div id="reportHeader">Credit Card Transactions</div>
 
     <table cellpadding="0" cellspacing="0">
@@ -479,5 +431,6 @@
           </tfoot>
         </table>
     <% end %>
+    <span id="pageNumber"></span>
     <div style="page-break-after: always;">&nbsp;</div>
 <% end %>

@@ -51,9 +51,7 @@ class DisbursementRecordsController < ApplicationController
     @dr_descriptors = ids.collect {|dr_id|
       DisbursementRecordsHelper::DisbursementReportDescriptor.new(dr_id, rf_client)
     }
-
-    str = render_to_string(:template => 'disbursement_records/show')
-    PDFKit.new(str, :page_size => 'Letter', :orientation => 'Landscape')
+    PDFKit.new(render_to_string(:template => 'disbursement_records/show'))
   end
 
   def search
@@ -61,14 +59,11 @@ class DisbursementRecordsController < ApplicationController
 
   class PDFGeneration
     def initialize(report_id, ids, rf_client)
-      Rails.logger.info("SOMETHING #{rf_client}")
       @report_id = report_id
       @ids = ids
       @rf_client = rf_client
     end
     def perform
-      Rails.logger.info("BLAH #{@rf_client}")
-      #logger.error("HI!")
       kit = DisbursementRecordsController.new.render_pdf(@ids,@rf_client)
       PdfBlob.transaction do
         blob = PdfBlob.new
