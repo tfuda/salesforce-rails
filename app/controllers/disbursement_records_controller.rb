@@ -33,6 +33,7 @@ class DisbursementRecordsController < ApplicationController
       @dr_descriptors = params[:selected_ids].collect {|dr_id|
         DisbursementRecordsHelper::DisbursementReportDescriptor.new(dr_id, rf_client)
       }
+      render :layout => 'pdf_disbursement_reports'
       return
     end
     PdfReport.transaction do
@@ -51,7 +52,7 @@ class DisbursementRecordsController < ApplicationController
     @dr_descriptors = ids.collect {|dr_id|
       DisbursementRecordsHelper::DisbursementReportDescriptor.new(dr_id, rf_client)
     }
-    PDFKit.new(render_to_string(:template => 'disbursement_records/show'))
+    PDFKit.new(render_to_string(:template => 'disbursement_records/show', :layout => 'pdf_disbursement_reports'))
   end
 
   def search

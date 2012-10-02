@@ -10,16 +10,17 @@
   }
 </script>
 
-<h1>Disbursement Records</h1>
+<h1>Filter Settings</h1>
 <%= form_tag("/disbursement_records/index", :method => "get") do %>
-    <span>Start Date: <%= select_date(Date.current - 7.days, :prefix => 'start_date') %></span>
+    <span>Begin Date: <%= select_date(Date.current - 7.days, :prefix => 'start_date') %></span>
     <span style="padding-left: 20px;">End Date: <%= select_date(Date.current, :prefix => 'end_date') %></span>
-    <span style="padding-left: 20px;"><%= submit_tag "Fetch Records" %></span>
+    <span style="padding-left: 20px;"><%= submit_tag "Apply Filter" %></span>
 <% end %>
-<br/>
+<hr/>
+<h1>Disbursement Records</h1>
 <%= form_tag("/disbursement_records/show", :method => "post") do %>
-    HTML? <%=  check_box_tag "render_as_html" %><br/>
-    <%= submit_tag("Generate PDF for Selected Records") %>
+    Preview as HTML? <%=  check_box_tag "render_as_html" %><br/>
+    <%= submit_tag("Generate Report for Selected Records") %>
     <br/>
     <br/>
     <table>
