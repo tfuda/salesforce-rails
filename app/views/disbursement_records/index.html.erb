@@ -10,20 +10,23 @@
   }
 </script>
 
+<%= link_to 'View Disbursement Reports', pdf_reports_path %>
 <h1>Filter Settings</h1>
 <%= form_tag("/disbursement_records/index", :method => "get") do %>
-    <span>Begin Date: <%= select_date(Date.current - 7.days, :prefix => 'start_date') %></span>
-    <span style="padding-left: 20px;">End Date: <%= select_date(Date.current, :prefix => 'end_date') %></span>
-    <span style="padding-left: 20px;"><%= submit_tag "Apply Filter" %></span>
+    <label>Org. Name:</label><%= select_tag name='selected_org_name', options_for_select(@org_names, @selected_org_name) %>
+    <label style="padding-left: 5px;">Begin Date:</label><%= select_date(@start_date, :prefix => 'start_date') %>
+    <label style="padding-left: 5px;">End Date:</label><%= select_date(@end_date || Date.current, :prefix => 'end_date') %>
+    <span style="padding-left: 5px;"><%= submit_tag "Apply" %></span>
 <% end %>
 <hr/>
 <h1>Disbursement Records</h1>
 <%= form_tag("/disbursement_records/show", :method => "post") do %>
-    Preview as HTML? <%=  check_box_tag "render_as_html" %><br/>
+    <label>Preview as HTML?</label><%=  check_box_tag "render_as_html" %>
+    <br/>
     <%= submit_tag("Generate Report for Selected Records") %>
     <br/>
     <br/>
-    <table>
+    <table id="dis-records-table" cellspacing="3" cellpadding="3" >
       <thead>
         <th><input type="checkbox" name="select_all" onclick="selectDeselectAll(this);" ></th>
         <th>Name</th>

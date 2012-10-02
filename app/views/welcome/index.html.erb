@@ -1,7 +1,7 @@
 <% if @authenticated %>
-    You're logged in as <%= @me.username%>. Click <%= link_to "here", logout_path %> to logout.
-    <br/>
-    Click here to see a list of <%= link_to "Disbursement Records", disbursement_records_index_path %>
+    <h4>Welcome <%= @me.name %>. You're logged in as <%= @me.username%>. <%= link_to 'Logout', logout_path %></h4>
+    <h4>Click here to see a list of <%= link_to 'Disbursement Records', disbursement_records_index_path %></h4>
+    <h4>Click here to see a list of previously generated <%= link_to 'PDF Disbursement Reports', pdf_reports_path %></h4>
 <% else %>
-    You're not logged in. Click <a href="/auth/salesforce">here</a> to login.
+    <h4>Please login to continue. <a href="/auth/salesforce">Login</a></h4>
 <% end%>

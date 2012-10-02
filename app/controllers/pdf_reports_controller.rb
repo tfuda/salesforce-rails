@@ -2,6 +2,8 @@ class PdfReportsController < ApplicationController
   # GET /pdf_reports
   # GET /pdf_reports.json
   def index
+    @authenticated = authenticated?
+    @me = me if authenticated?
     @pdf_reports = PdfReport.all
 
     respond_to do |format|
@@ -13,6 +15,8 @@ class PdfReportsController < ApplicationController
   # GET /pdf_reports/1
   # GET /pdf_reports/1.json
   def show
+    @authenticated = authenticated?
+    @me = me if authenticated?
     @pdf_report = PdfReport.find(params[:id])
 
     respond_to do |format|
@@ -24,6 +28,8 @@ class PdfReportsController < ApplicationController
   # GET /pdf_reports/new
   # GET /pdf_reports/new.json
   def new
+    @authenticated = authenticated?
+    @me = me if authenticated?
     @pdf_report = PdfReport.new
 
     respond_to do |format|
@@ -34,12 +40,16 @@ class PdfReportsController < ApplicationController
 
   # GET /pdf_reports/1/edit
   def edit
+    @authenticated = authenticated?
+    @me = me if authenticated?
     @pdf_report = PdfReport.find(params[:id])
   end
 
   # POST /pdf_reports
   # POST /pdf_reports.json
   def create
+    @authenticated = authenticated?
+    @me = me if authenticated?
     @pdf_report = PdfReport.new(params[:pdf_report])
 
     respond_to do |format|
@@ -56,6 +66,8 @@ class PdfReportsController < ApplicationController
   # PUT /pdf_reports/1
   # PUT /pdf_reports/1.json
   def update
+    @authenticated = authenticated?
+    @me = me if authenticated?
     @pdf_report = PdfReport.find(params[:id])
 
     respond_to do |format|
@@ -72,6 +84,8 @@ class PdfReportsController < ApplicationController
   # DELETE /pdf_reports/1
   # DELETE /pdf_reports/1.json
   def destroy
+    @authenticated = authenticated?
+    @me = me if authenticated?
     @pdf_report = PdfReport.find(params[:id])
     @pdf_report.destroy
 
@@ -82,12 +96,13 @@ class PdfReportsController < ApplicationController
   end
 
   def download
+    @authenticated = authenticated?
+    @me = me if authenticated?
     report = PdfReport.find(params[:id])
     send_data(report.pdf_blob.blob, {
         :filename => "dr.pdf",
         :type => :pdf,
         :disposition => "attachment"
     })
-
   end
 end

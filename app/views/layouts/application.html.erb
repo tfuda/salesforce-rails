@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= @page_title || "Disbursement Report Generator" %></title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= stylesheet_link_tag "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tag %>
 </head>
 <body>
-
-<%= yield %>
-
+    <div id="banner">
+      <%= image_tag "PTlogo-cleaned.png" %>
+      <%= @page_title || "Disbursement Report Generator" %>
+      <div id="links">
+        <% if @authenticated  %>
+            Welcome <%= @me.name %>
+            <%= link_to 'Logout', logout_path %>
+        <%else%>
+            <a href="/auth/salesforce">Login</a></h4>
+        <%end%>
+      </div>
+    </div>
+    <div id="main" >
+      <%= yield %>
+    </div>
 </body>
 </html>

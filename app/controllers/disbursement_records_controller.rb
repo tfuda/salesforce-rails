@@ -1,24 +1,24 @@
 require 'delayed_job'
 
 class DisbursementRecordsController < ApplicationController
-  include Databasedotcom::OAuth2::Helpers
   before_filter :require_authentication
 
   def index
-    start_date = Time.now - 7.days
-    end_date = nil
-    if params[:start_date]
-      start_date = Time.local(params[:start_date][:year], params[:start_date][:month], params[:start_date][:day], 0, 0 ,0)
-    end
-    if params[:end_date]
-      end_date = Time.local(params[:end_date][:year], params[:end_date][:month], params[:end_date][:day], 23, 59, 59)
-    end
+    @authenticated = authenticated?
+    @me = me if authenticated?
+    @selected_org_name = nil unless @selected_org_name
+    @selected_org_name = params[:selected_org_name]
+    @start_date = Time.now - 7.days unless @start_date
+    @start_date = Time.local(params[:start_date][:year], params[:start_date][:month], params[:start_date][:day], 0, 0 ,0) if params[:start_date]
+    @end_date = nil unless @end_date
+    @end_date = Time.local(params[:end_date][:year], params[:end_date][:month], params[:end_date][:day], 23, 59, 59) if params[:end_date]
 
     # Retrieve the list of Disbursement Records, handling the possibility of pagination.
     dr_query = "SELECT Id, Name, OrganizationName__c, EndDate__c, CreatedDate, " +
         "CreatedById, CreatedBy.Name FROM DisbursementRecord__c"
-    dr_query += " WHERE CreatedDate >= " + start_date.xmlschema
-    dr_query += " AND CreatedDate <= " + end_date.xmlschema if end_date != nil
+    dr_query += " WHERE CreatedDate >= " + @start_date.xmlschema
+    dr_query += " AND CreatedDate <= " + @end_date.xmlschema if @end_date != nil
+    dr_query += " AND OrganizationName__c = '" + @selected_org_name + "'" if (@selected_org_name && @selected_org_name != '')
     dr_query += " ORDER BY OrganizationName__c ASC, CreatedDate DESC"
     dr_collection = rf_client.query(dr_query)
     @disbursement_records = dr_collection.dup.to_a
@@ -26,6 +26,10 @@ class DisbursementRecordsController < ApplicationController
       dr_collection = dr_collection.next_page
       @disbursement_records += dr_collection
     end
+
+    # Used to build a select list on the page
+    @org_names = [['--All--', '']]
+    @org_names |= @disbursement_records.map {|dr| dr.OrganizationName__c}.uniq
   end
 
   def show
@@ -53,9 +57,6 @@ class DisbursementRecordsController < ApplicationController
       DisbursementRecordsHelper::DisbursementReportDescriptor.new(dr_id, rf_client)
     }
     PDFKit.new(render_to_string(:template => 'disbursement_records/show', :layout => 'pdf_disbursement_reports'))
-  end
-
-  def search
   end
 
   class PDFGeneration

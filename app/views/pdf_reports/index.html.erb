@@ -1,28 +1,27 @@
-<h1>Listing pdf_reports</h1>
-<table>
+<%= link_to 'View Disbursement Records', disbursement_records_index_path %>
+<h1>Disbursement Report Jobs</h1>
+<p>Refresh the page to update job status. When job status changes from 'Queued' to 'Done', click the 'Download' link to view/print the generated PDF.</p>
+<table id="dr-jobs-table" cellspacing="3" cellpadding="3" >
   <thead>
     <tr>
         <th>Report Id</th>
-        <th>DR list</th>
-        <th>Status</th>
-        <th>Job</th>
+        <th>Created</th>
+        <th>Job Status</th>
         <th>PDF Report</th>
-        <th></th>
     </tr>
   </thead>
   <tbody>
     <% @pdf_reports.each do |pdf_report| %>
       <tr>
         <td><%= pdf_report.id %></td>
-        <td><%= pdf_report.dr_list %></td>
+        <td><%= pdf_report.created_at.localtime.strftime("%Y-%m-%d %H:%M:%S") %></td>
         <td><%= pdf_report.status %></td>
-        <td><%= pdf_report.delayed_job_id %></td>
         <td>
           <% if pdf_report.status == PdfReport::Status::Done %>
               <%= link_to 'Download', download_pdf_report_path(pdf_report) %>
           <%end%>
+          <%= link_to 'Destroy', pdf_report, method: :delete, data: { confirm: 'Are you sure?' } %>
         </td>
-        <td><%= link_to 'Destroy', pdf_report, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>

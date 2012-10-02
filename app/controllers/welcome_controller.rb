@@ -1,6 +1,4 @@
 class WelcomeController < ApplicationController
-  include Databasedotcom::OAuth2::Helpers
-
   def index
     @authenticated = authenticated?
     @me = me if authenticated?
@@ -8,6 +6,6 @@ class WelcomeController < ApplicationController
 
   def logout
     client.logout if authenticated?
-    render "index"
+    render 'index'
   end
 end
